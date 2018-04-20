@@ -1,7 +1,7 @@
 [package]
 name = "dbmeter"
 version = "0.1.0"
-authors = ["Anton Okolelov <okoanton@yandex.ru>", "Oleg Grizak"]
+authors = ["Anton Okolelov <okoanton@yandex.ru>", "Oleg Gritsak <hack3p@gmail.com>"]
 
 [dependencies]
 postgres = "0.15"
