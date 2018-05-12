@@ -8,7 +8,6 @@ use chrono::Local;
 use config::Config;
 use postgres_monitoring::start_monitoring;
 
-
 fn main() {
     println!("Start daemon {}", Local::now());
 
