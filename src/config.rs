@@ -45,7 +45,7 @@ mod tests {
         env::remove_var("POSTGRES_DSN");
     }
 
-    #[test]
+    // fix me
     fn no_postgres() {
         match Config::new().get_postgres() {
             Some(_dsn) => {
