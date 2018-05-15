@@ -1,5 +1,7 @@
 extern crate chrono;
 extern crate postgres;
+#[macro_use]
+extern crate lazy_static;
 
 mod config;
 mod postgres_monitoring;
@@ -13,7 +15,7 @@ fn main() {
 
     let config = Config::new();
 
-    if let Some(dsn) = config.get_postgres() {
-        start_monitoring(dsn);
+    if let &Some(ref dsn) = config.get_postgres() {
+        start_monitoring(dsn.to_string());
     }
 }
