@@ -22,8 +22,8 @@ impl Config {
         config
     }
 
-    pub fn get_postgres(self) -> Option<String> {
-        self.postgres_dsn
+    pub fn get_postgres<'a>(&'a self) -> &'a Option<String> {
+        &self.postgres_dsn
     }
 }
 
@@ -31,28 +31,36 @@ impl Config {
 mod tests {
 
     use super::*;
+    use std::sync::Mutex;
+
+    lazy_static! {
+        pub static ref ENV_MUTEX: Mutex<()> = Mutex::new(());
+    }
 
     #[test]
     fn get_postgres() {
+        let _mutex_guard = ENV_MUTEX.lock().unwrap();
+
         env::set_var(
             "POSTGRES_DSN",
             "postgresql://anton:12345@localhost:5432/l09",
         );
         match Config::new().get_postgres() {
-            Some(_dsn) => assert!(true),
-            None => assert!(false),
+            &Some(ref dsn) => assert_eq!(dsn, "postgresql://anton:12345@localhost:5432/l09"),
+            &None => assert!(false),
         }
-        env::remove_var("POSTGRES_DSN");
     }
 
-    // fix me
+    #[test]
     fn no_postgres() {
+        let _mutex_guard = ENV_MUTEX.lock().unwrap();
+
+        env::remove_var("POSTGRES_DSN");
         match Config::new().get_postgres() {
-            Some(_dsn) => {
-                println!("{}", _dsn);
+            &Some(ref _dsn) => {
                 assert!(false);
             }
-            None => assert!(true),
+            &None => assert!(true),
         }
     }
 }

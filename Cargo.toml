@@ -7,3 +7,4 @@ authors = ["Anton Okolelov <okoanton@yandex.ru>", "Oleg Gritsak <hack3p@gmail.co
 postgres = "0.15"
 chrono = "0.4"
 dotenv = "0.10"
+lazy_static = "1.0"
