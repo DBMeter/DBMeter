@@ -2,17 +2,16 @@
 
 use postgres::rows::Row;
 
-/// @todo: choose other name
-pub struct PgStat {
+pub struct QueryStatSnapshot {
     pub queryid: i64,  //	 	Internal hash code, computed from the statement's parse tree
     pub query: String, // 	Text of a representative statement
     pub calls: i64,    // 	Number of times executed
     pub total_time: f64, //	 	Total time spent in the statement, in milliseconds
 }
 
-impl PgStat {
-    pub fn from_row(row: Row) -> PgStat {
-        PgStat {
+impl QueryStatSnapshot {
+    pub fn from_row(row: Row) -> QueryStatSnapshot {
+        QueryStatSnapshot {
             queryid: row.get("queryid"),
             query: row.get("query"),
             calls: row.get("calls"),

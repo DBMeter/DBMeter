@@ -1,12 +1,12 @@
 use postgres::{Connection, TlsMode};
 use std::thread;
 use std::time::Duration;
-use postgres_monitoring::pg_stat::PgStat;
-use postgres_monitoring::pg_history::PgHistory;
+use postgres_monitoring::query_stat_snapshot::QueryStatSnapshot;
+use postgres_monitoring::history::History;
 
-mod pg_history;
-mod pg_stat;
-mod monitoring_output;
+mod history;
+mod query_stat_snapshot;
+mod query_monitoring_output;
 
 pub fn start_monitoring(postgres_url: String) {
     println!("postgres url: {}", postgres_url);
@@ -22,7 +22,7 @@ pub fn start_monitoring(postgres_url: String) {
 
     let connection = result.unwrap();
 
-    let mut pg_history = PgHistory::new();
+    let mut pg_history = History::new();
 
     let interval = 1u64;
 
@@ -35,10 +35,13 @@ pub fn start_monitoring(postgres_url: String) {
                  FROM dbmeter.pg_stat_statements()",
                 &[],
             )
-            .expect("ошибка");
+            .expect(
+                "Coudln't select from dbmeter.pg_stat_statements. \
+                 Please make sure it properly installed",
+            );
 
         for row in rows {
-            let pg_stat = PgStat::from_row(row);
+            let pg_stat = QueryStatSnapshot::from_row(row);
             let monitoring_output = pg_history.save_stat_and_get_diff(pg_stat);
             if monitoring_output.calls > 0 {
                 println!(
