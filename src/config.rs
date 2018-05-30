@@ -22,7 +22,7 @@ impl Config {
         config
     }
 
-    pub fn get_postgres<'a>(&'a self) -> &'a Option<String> {
+    pub fn get_postgres(&self) -> &Option<String> {
         &self.postgres_dsn
     }
 }

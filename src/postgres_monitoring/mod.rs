@@ -22,7 +22,7 @@ pub fn start_monitoring(postgres_url: String) {
 
     let connection = result.unwrap();
 
-    let mut pg_history = History::new();
+    let mut history = History::new();
 
     let interval = 1u64;
 
@@ -41,8 +41,8 @@ pub fn start_monitoring(postgres_url: String) {
             );
 
         for row in rows {
-            let pg_stat = QueryStatSnapshot::from_row(row);
-            let monitoring_output = pg_history.save_stat_and_get_diff(pg_stat);
+            let query_snapshot = QueryStatSnapshot::from_row(row);
+            let monitoring_output = history.save_stat_and_get_diff(query_snapshot);
             if monitoring_output.calls > 0 {
                 println!(
                     "query: {}, mean_time: {}",
