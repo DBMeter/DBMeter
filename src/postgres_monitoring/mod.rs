@@ -36,8 +36,8 @@ pub fn start_monitoring(postgres_url: String) {
                 &[],
             )
             .expect(
-                "Coudln't select from dbmeter.pg_stat_statements. \
-                 Please make sure it properly installed",
+                "Couldn't select from dbmeter.pg_stat_statements. \
+                 Please make sure it's properly installed",
             );
 
         for row in rows {
