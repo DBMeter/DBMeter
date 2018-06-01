@@ -1,6 +1,6 @@
 [package]
 name = "dbmeter"
-version = "0.1.0"
+version = "0.1.13"
 authors = ["Anton Okolelov <okoanton@yandex.ru>", "Oleg Gritsak <hack3p@gmail.com>"]
 
 [dependencies]
