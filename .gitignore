@@ -1,4 +1,5 @@
 dbmeter.iml
 .idea
+.env
 /target
 **/*.rs.bk
