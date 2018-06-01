@@ -18,14 +18,15 @@ impl History {
         let query = current_snapshot.query.clone();
 
         let mut diff = Diff {
+            db_id: current_snapshot.dbid.clone(),
             query: query.clone(),
             calls: 0,
             mean_time: 0.0,
         };
 
-        if let Some(storage_snapshot) = self.storage.get(&storage_key) {
-            diff.calls = (current_snapshot.calls - storage_snapshot.calls) as u64;
-            let mean_time = diff.calls as f64 / (current_snapshot.total_time - storage_snapshot.total_time);
+        if let Some(stored_snapshot) = self.storage.get(&storage_key) {
+            diff.calls = (current_snapshot.calls - stored_snapshot.calls) as u64;
+            let mean_time = diff.calls as f64 / (current_snapshot.total_time - stored_snapshot.total_time);
             diff.mean_time = if mean_time.is_nan() { 0.0 } else { mean_time }
         }
 

@@ -1,10 +1,12 @@
-use drivers::postgres::Connection;
+use db_drivers::elasticsearch::ElasticSearch;
+use db_drivers::postgres::Connection;
+use export::Export;
 use monitoring::history::History;
 use monitoring::snapshot::Snapshot;
 use std::thread;
 use std::time::Duration;
 
-mod diff;
+pub mod diff;
 mod history;
 mod snapshot;
 
@@ -50,10 +52,7 @@ pub fn start_monitoring(postgres_dsn: String) {
             let query_snapshot = Snapshot::from_row(row);
             let diff = history.save_stat_and_get_diff(query_snapshot);
             if diff.calls > 0 {
-                println!(
-                    "query: {}, calls: {},  mean_time: {}",
-                    diff.query, diff.calls, diff.mean_time
-                );
+                ElasticSearch::save(Export::new(diff));
             }
         }
     }
