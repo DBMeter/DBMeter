@@ -1,14 +1,17 @@
 extern crate chrono;
 extern crate postgres;
+
+#[cfg(test)]
 #[macro_use]
 extern crate lazy_static;
 
 mod config;
-mod postgres_monitoring;
+mod drivers;
+mod monitoring;
 
 use chrono::Local;
 use config::Config;
-use postgres_monitoring::start_monitoring;
+use monitoring::start_monitoring;
 
 fn main() {
     println!("Start daemon {}", Local::now());

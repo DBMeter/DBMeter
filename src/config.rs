@@ -17,6 +17,8 @@ impl Config {
 
         if let Ok(_postgres_dsn) = env::var("POSTGRES_DSN") {
             config.postgres_dsn = Some(_postgres_dsn)
+        } else {
+            panic!("ERROR: Setup `POSTGRES_DSN` environment variable. Read more in ./README.md");
         }
 
         config
@@ -39,28 +41,21 @@ mod tests {
 
     #[test]
     fn get_postgres() {
-        let _mutex_guard = ENV_MUTEX.lock().unwrap();
+        let _mutex_guard = ENV_MUTEX.lock();
+        let env_dsn = "postgresql://dbmeter:12345@localhost:5432/l09";
 
-        env::set_var(
-            "POSTGRES_DSN",
-            "postgresql://anton:12345@localhost:5432/l09",
-        );
-        match Config::new().get_postgres() {
-            &Some(ref dsn) => assert_eq!(dsn, "postgresql://anton:12345@localhost:5432/l09"),
-            &None => assert!(false),
+        env::set_var("POSTGRES_DSN", env_dsn);
+
+        if let Some(config_dsn) = Config::new().get_postgres() {
+            assert_eq!(config_dsn, env_dsn)
         }
     }
 
     #[test]
+    #[should_panic]
     fn no_postgres() {
-        let _mutex_guard = ENV_MUTEX.lock().unwrap();
-
+        let _mutex_guard = ENV_MUTEX.lock();
         env::remove_var("POSTGRES_DSN");
-        match Config::new().get_postgres() {
-            &Some(ref _dsn) => {
-                assert!(false);
-            }
-            &None => assert!(true),
-        }
+        Config::new().get_postgres();
     }
 }
