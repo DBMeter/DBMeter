@@ -3,7 +3,7 @@ DBMeter [![Build Status](https://travis-ci.org/DBMeter/DBMeter.svg?branch=master
 
 ## Installation guide
 
-1. Install postgresql
+1. Install: postgresql, elasticsearch, grafana 
 2. Enable [pg_stat_statements](https://www.postgresql.org/docs/current/static/pgstatstatements.html) module in postgres
 3. Execute `install.sql` from postgres user (change credentials if needed):
 ```bash

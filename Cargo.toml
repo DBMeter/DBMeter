@@ -1,6 +1,6 @@
 [package]
 name = "dbmeter"
-version = "0.1.13"
+version = "0.1.14"
 authors = ["Anton Okolelov <okoanton@yandex.ru>", "Oleg Gritsak <hack3p@gmail.com>"]
 
 [dependencies]
@@ -8,3 +8,8 @@ postgres = "0.15"
 chrono = "0.4"
 dotenv = "0.10"
 lazy_static = "1.0"
+elastic = "*"
+elastic_derive = "*"
+serde_json = "*"
+serde_derive = "*"
+serde = "*"
