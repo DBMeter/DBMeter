@@ -1,27 +1,26 @@
-use drivers::postgres;
 use postgres::rows::Row;
 
 /// struct for row of pg_stat_statements
 pub struct Snapshot {
-    pub userid: postgres::types::Oid, // OID of user who executed the statement
-    pub dbid: postgres::types::Oid,   // OID of database in which the statement was executed
-    pub queryid: postgres::types::Bigint, // Internal hash code, computed from the statement's parse tree
-    pub query: postgres::types::Text,     // Text of a representative statement
-    pub calls: postgres::types::Bigint,   // Number of times executed
-    pub total_time: postgres::types::DoublePrecision, // Total time spent in the statement, in milliseconds
-    pub rows: postgres::types::Bigint, // Total number of rows retrieved or affected by the statement
-    pub shared_blks_hit: postgres::types::Bigint, // Total number of shared block cache hits by the statement
-    pub shared_blks_read: postgres::types::Bigint, // Total number of shared blocks read by the statement
-    pub shared_blks_dirtied: postgres::types::Bigint, // Total number of shared blocks dirtied by the statement
-    pub shared_blks_written: postgres::types::Bigint, // Total number of shared blocks written by the statement
-    pub local_blks_hit: postgres::types::Bigint, // Total number of local block cache hits by the statement
-    pub local_blks_read: postgres::types::Bigint, // Total number of local blocks read by the statement
-    pub local_blks_dirtied: postgres::types::Bigint, // Total number of local blocks dirtied by the statement
-    pub local_blks_written: postgres::types::Bigint, // Total number of local blocks written by the statement
-    pub temp_blks_read: postgres::types::Bigint, // Total number of temp blocks read by the statement
-    pub temp_blks_written: postgres::types::Bigint, // Total number of temp blocks written by the statement
-    pub blk_read_time: postgres::types::DoublePrecision, // Total time the statement spent reading blocks, in milliseconds (if track_io_timing is enabled, otherwise zero)
-    pub blk_write_time: postgres::types::DoublePrecision, // Total time the statement spent writing blocks, in milliseconds (if track_io_timing is enabled, otherwise zero)
+    pub userid: u32,              // OID of user who executed the statement
+    pub dbid: u32,                // OID of database in which the statement was executed
+    pub queryid: i64,             // Internal hash code, computed from the statement's parse tree
+    pub query: String,            // Text of a representative statement
+    pub calls: i64,               // Number of times executed
+    pub total_time: f64,          // Total time spent in the statement, in milliseconds
+    pub rows: i64,                // Total number of rows retrieved or affected by the statement
+    pub shared_blks_hit: i64,     // Total number of shared block cache hits by the statement
+    pub shared_blks_read: i64,    // Total number of shared blocks read by the statement
+    pub shared_blks_dirtied: i64, // Total number of shared blocks dirtied by the statement
+    pub shared_blks_written: i64, // Total number of shared blocks written by the statement
+    pub local_blks_hit: i64,      // Total number of local block cache hits by the statement
+    pub local_blks_read: i64,     // Total number of local blocks read by the statement
+    pub local_blks_dirtied: i64,  // Total number of local blocks dirtied by the statement
+    pub local_blks_written: i64,  // Total number of local blocks written by the statement
+    pub temp_blks_read: i64,      // Total number of temp blocks read by the statement
+    pub temp_blks_written: i64,   // Total number of temp blocks written by the statement
+    pub blk_read_time: f64, // Total time the statement spent reading blocks, in milliseconds (if track_io_timing is enabled, otherwise zero)
+    pub blk_write_time: f64, // Total time the statement spent writing blocks, in milliseconds (if track_io_timing is enabled, otherwise zero)
 }
 
 impl Snapshot {

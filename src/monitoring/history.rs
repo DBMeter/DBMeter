@@ -13,9 +13,9 @@ impl History {
         }
     }
 
-    pub fn save_stat_and_get_diff(&mut self, query_snapshot: Snapshot) -> Diff {
-        let snapshot_id = self.make_storage_id(&query_snapshot);
-        let query = query_snapshot.query.clone();
+    pub fn save_stat_and_get_diff(&mut self, current_snapshot: Snapshot) -> Diff {
+        let storage_key = self.make_storage_key(&current_snapshot);
+        let query = current_snapshot.query.clone();
 
         let mut diff = Diff {
             query: query.clone(),
@@ -23,17 +23,17 @@ impl History {
             mean_time: 0.0,
         };
 
-        if let Some(old_stat) = self.storage.get(&snapshot_id) {
-            diff.calls = query_snapshot.calls - old_stat.calls;
-            let mean_time = diff.calls as f64 / (query_snapshot.total_time - old_stat.total_time);
+        if let Some(storage_snapshot) = self.storage.get(&storage_key) {
+            diff.calls = (current_snapshot.calls - storage_snapshot.calls) as u64;
+            let mean_time = diff.calls as f64 / (current_snapshot.total_time - storage_snapshot.total_time);
             diff.mean_time = if mean_time.is_nan() { 0.0 } else { mean_time }
         }
 
-        self.storage.insert(snapshot_id.clone(), query_snapshot);
+        self.storage.insert(storage_key.clone(), current_snapshot);
         diff
     }
 
-    fn make_storage_id(&mut self, snapshot: &Snapshot) -> String {
+    fn make_storage_key(&mut self, snapshot: &Snapshot) -> String {
         format!("{}{}", snapshot.dbid, snapshot.query)
     }
 }
@@ -42,22 +42,21 @@ impl History {
 mod tests {
 
     use super::*;
-    use drivers::postgres::types;
 
     #[test]
     fn diff_calls_and_mean_time_is_corrected() {
         let mut query_snapshot1 = self::get_base_snapshot();
         query_snapshot1.calls = 5;
-        query_snapshot1.total_time = 10 as types::DoublePrecision;
+        query_snapshot1.total_time = 10.0;
 
         let mut query_snapshot2 = self::get_base_snapshot();
         query_snapshot2.calls = 7;
-        query_snapshot2.total_time = 20 as types::DoublePrecision;
+        query_snapshot2.total_time = 20.0;
 
         let mut history = History::new();
         history.save_stat_and_get_diff(query_snapshot1);
 
-        let diff: Diff = history.save_stat_and_get_diff(query_snapshot2);
+        let diff = history.save_stat_and_get_diff(query_snapshot2);
 
         assert!(0.2f64 - 0.001 <= diff.mean_time && diff.mean_time <= 0.2f64 + 0.001);
         assert_eq!(2, diff.calls);
@@ -69,18 +68,18 @@ mod tests {
         query_snapshot1.dbid = 1;
         query_snapshot1.query = String::from("SELECT 1");
         query_snapshot1.calls = 5;
-        query_snapshot1.total_time = 10 as types::DoublePrecision;
+        query_snapshot1.total_time = 10.0;
 
         let mut query_snapshot2 = self::get_base_snapshot();
         query_snapshot2.dbid = 2;
         query_snapshot2.query = String::from("SELECT 1");
         query_snapshot2.calls = 7;
-        query_snapshot2.total_time = 20 as types::DoublePrecision;
+        query_snapshot2.total_time = 20.0;
 
         let mut history = History::new();
         history.save_stat_and_get_diff(query_snapshot1);
 
-        let diff: Diff = history.save_stat_and_get_diff(query_snapshot2);
+        let diff = history.save_stat_and_get_diff(query_snapshot2);
 
         assert_eq!(diff.calls, 0);
         assert_eq!(diff.mean_time, 0.0);
@@ -92,30 +91,21 @@ mod tests {
         query_snapshot1.dbid = 1;
         query_snapshot1.query = String::from("SELECT 1");
         query_snapshot1.calls = 5;
-        query_snapshot1.total_time = 10 as types::DoublePrecision;
+        query_snapshot1.total_time = 10.0;
 
         let mut query_snapshot2 = self::get_base_snapshot();
         query_snapshot2.dbid = 1;
         query_snapshot2.query = String::from("SELECT 1");
         query_snapshot2.calls = 5;
-        query_snapshot2.total_time = 10 as types::DoublePrecision;
+        query_snapshot2.total_time = 10.0;
 
         let mut history = History::new();
         history.save_stat_and_get_diff(query_snapshot1);
 
-        let diff: Diff = history.save_stat_and_get_diff(query_snapshot2);
-
-        println!("{}", diff.mean_time);
+        let diff = history.save_stat_and_get_diff(query_snapshot2);
 
         assert_eq!(diff.calls, 0);
         assert_eq!(diff.mean_time, 0.0);
-    }
-
-    #[test]
-    fn save_stat_and_get_diff() {
-        let snapshot = self::get_base_snapshot();
-        let mut history = History::new();
-        let _diff: Diff = history.save_stat_and_get_diff(snapshot);
     }
 
     fn get_base_snapshot() -> Snapshot {
@@ -125,7 +115,7 @@ mod tests {
             queryid: 1,
             query: "".to_string(),
             calls: 5,
-            total_time: 10 as types::DoublePrecision,
+            total_time: 10.0,
             rows: 1,
             shared_blks_hit: 1,
             shared_blks_read: 1,
@@ -137,8 +127,8 @@ mod tests {
             local_blks_written: 1,
             temp_blks_read: 1,
             temp_blks_written: 1,
-            blk_read_time: 1 as types::DoublePrecision,
-            blk_write_time: 1 as types::DoublePrecision,
+            blk_read_time: 1.0,
+            blk_write_time: 1.0,
         }
     }
 }

@@ -16,10 +16,3 @@ impl Connection {
         connection.unwrap()
     }
 }
-
-pub mod types {
-    pub type Oid = u32;
-    pub type Bigint = i64;
-    pub type DoublePrecision = f64;
-    pub type Text = String;
-}
